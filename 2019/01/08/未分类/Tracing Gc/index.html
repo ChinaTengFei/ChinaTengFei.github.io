@@ -7,17 +7,17 @@
   
   <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Tracing Gc#标签（空格分隔）： 未分类  1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980#include &amp;lt;stdio.h&amp;gt">
+  <meta name="description" content="Tracing Gc标签（空格分隔）： 未分类  1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980#include &amp;lt;stdio.h&amp;gt;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://yoursite.com/2019/01/08/未分类/Tracing Gc/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Tracing Gc#标签（空格分隔）： 未分类  1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980#include &amp;lt;stdio.h&amp;gt">
+<meta property="og:description" content="Tracing Gc标签（空格分隔）： 未分类  1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980#include &amp;lt;stdio.h&amp;gt;">
 <meta property="og:locale" content="default">
 <meta property="og:updated_time" content="2019-01-08T15:38:07.480Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
-<meta name="twitter:description" content="Tracing Gc#标签（空格分隔）： 未分类  1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980#include &amp;lt;stdio.h&amp;gt">
+<meta name="twitter:description" content="Tracing Gc标签（空格分隔）： 未分类  1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980#include &amp;lt;stdio.h&amp;gt;">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -76,14 +76,14 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1><span id="tracing-gc">Tracing Gc</span><a href="#tracing-gc" class="header-anchor">#</a></h1><p>标签（空格分隔）： 未分类</p>
+        <h1><span id="tracing-gc">Tracing Gc</span></h1><p>标签（空格分隔）： 未分类</p>
 <hr>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;time.h&gt;</span><br><span class="line">#include &lt;sys/stat.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;sys/mman.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;iostream&gt;</span><br><span class="line">class Object</span><br><span class="line">&#123;</span><br><span class="line">  public:</span><br><span class="line">    int i;</span><br><span class="line">    int j;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">void init();</span><br><span class="line">void new_obj();</span><br><span class="line">void* Palloc(int temp );</span><br><span class="line">char *root;</span><br><span class="line">int allocAble = 0;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    init();</span><br><span class="line">    void *currentNode = root;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void init()</span><br><span class="line">&#123;</span><br><span class="line">    root = (char *)mmap(NULL, sizeof(Object) * 10, PROT_WRITE | PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);</span><br><span class="line">    if (root == MAP_FAILED)</span><br><span class="line">    &#123;</span><br><span class="line">        printf(&quot;field&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">new_obj();</span><br><span class="line">    // srand((unsigned)time(NULL));</span><br><span class="line">    // for (int i = 0; i &lt; sizeof(Object) * 10; i++)</span><br><span class="line">    // &#123;</span><br><span class="line">    //     Object *temp = static_cast&lt;Object *&gt;(root + i);</span><br><span class="line">    //     temp-&gt;i = i;</span><br><span class="line">    //     temp-&gt;j = i * 2;</span><br><span class="line">    //     if (i &lt; sizeof(Object) * 10 - 2)</span><br><span class="line">    //         temp-&gt;next = (temp + (rand() % (sizeof(Object) * 10 - i - 0)) + 0);</span><br><span class="line">    // &#125;</span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; sizeof(Object) * 10; i +=1)</span><br><span class="line">    &#123;</span><br><span class="line">        char* temp = (char*)(root+i);</span><br><span class="line">        printf(&quot;address=%d\n&quot;, *temp);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void new_obj()</span><br><span class="line">&#123;</span><br><span class="line">    Palloc(1);</span><br><span class="line">    Palloc(2);</span><br><span class="line">    Palloc(3);</span><br><span class="line">    Palloc(4);</span><br><span class="line">    Palloc(5);</span><br><span class="line">        int count = 0;</span><br><span class="line">    for(char* i = root;i&lt;root+allocAble;i++)&#123;</span><br><span class="line">        *i=count;</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void *Palloc(int size)</span><br><span class="line">&#123;</span><br><span class="line">    int preAllocAble = allocAble;</span><br><span class="line">    if (allocAble == 0)</span><br><span class="line">    &#123;</span><br><span class="line">        allocAble = size + 1;</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">    &#123;</span><br><span class="line">        allocAble = size + allocAble;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return (void *)(preAllocAble + root);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/未分类/Tracing Gc/" data-id="cjqnxtot000110307w3vggwya" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/01/08/未分类/Tracing Gc/" data-id="cjqny08cq00120q07aereggbv" class="article-share-link">Share</a>
       
       
     </footer>
@@ -92,7 +92,7 @@
     
 <nav id="article-nav">
   
-    <a href="/2019/01/08/未分类/java解释器分析/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/01/08/收藏/博客收藏/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
@@ -102,7 +102,7 @@
     </a>
   
   
-    <a href="/2019/01/08/收藏/博客收藏/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2019/01/08/shell/shell常用命令/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title"></div>
     </a>
@@ -149,15 +149,15 @@
           </li>
         
           <li>
-            <a href="/2019/01/08/未分类/Tracing Gc/">(no title)</a>
-          </li>
-        
-          <li>
             <a href="/2019/01/08/收藏/博客收藏/">(no title)</a>
           </li>
         
           <li>
-            <a href="/2019/01/08/vcs/maple的repo/">(no title)</a>
+            <a href="/2019/01/08/未分类/Tracing Gc/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/08/shell/shell常用命令/">(no title)</a>
           </li>
         
       </ul>

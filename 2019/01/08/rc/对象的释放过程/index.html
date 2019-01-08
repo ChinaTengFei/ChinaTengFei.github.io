@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="对象的释放过程标签（空格分隔）： rc  释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起 1234567891011121314void RosAllocImpl::FreeObj(address_t obj_addr) &amp;#123;  // release monitor  //__MRT_ASSERT(!hasWeakProxy(obj_addr), &quot;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2019/01/08/rc/对象的释放过程/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="对象的释放过程标签（空格分隔）： rc  释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起 1234567891011121314void RosAllocImpl::FreeObj(address_t obj_addr) &amp;#123;  // release monitor  //__MRT_ASSERT(!hasWeakProxy(obj_addr), &quot;">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-01-08T15:38:07.476Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="对象的释放过程标签（空格分隔）： rc  释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起 1234567891011121314void RosAllocImpl::FreeObj(address_t obj_addr) &amp;#123;  // release monitor  //__MRT_ASSERT(!hasWeakProxy(obj_addr), &quot;">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-rc/对象的释放过程" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/01/08/rc/对象的释放过程/" class="article-date">
+  <time datetime="2019-01-08T15:38:07.476Z" itemprop="datePublished">2019-01-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="对象的释放过程"><a href="#对象的释放过程" class="headerlink" title="对象的释放过程"></a>对象的释放过程</h1><p>标签（空格分隔）： rc</p>
+<hr>
+<p>释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> RosAllocImpl::FreeObj(<span class="keyword">address_t</span> obj_addr) &#123;</span><br><span class="line">  <span class="comment">// release monitor</span></span><br><span class="line">  <span class="comment">//__MRT_ASSERT(!hasWeakProxy(obj_addr), "unexpected");</span></span><br><span class="line">  maplert::Allocator::ReleaseResource(obj_addr);</span><br><span class="line"></span><br><span class="line">  MRT_LOG(ALLOC, LVL_DEBUG, <span class="string">"Freeing object %p"</span>, (<span class="keyword">void</span>* )obj_addr);</span><br><span class="line">  <span class="keyword">size_t</span> obj_size = PreObjFree(obj_addr);</span><br><span class="line">  <span class="keyword">size_t</span> freed_bytes = <span class="number">0U</span>;</span><br><span class="line">  <span class="comment">// 主要释放操作在这里,这是一个宏:</span></span><br><span class="line">  <span class="comment">// #define JSAN_Free(obj, real_free_func, internal_size)internal_size = real_free_func(obj) </span></span><br><span class="line">  <span class="comment">// 调用FreeObjInternal方法释放对象非</span></span><br><span class="line">  JSAN_Free(obj_addr, FreeObjInternal, freed_bytes);</span><br><span class="line">  PostObjFree(freed_bytes, obj_size);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">size_t</span> RosAllocImpl::FreeObjInternal(<span class="keyword">address_t</span> obj_addr) &#123;</span><br><span class="line">  ROSIMPL_LOG_FREE_OBJ(obj_addr);</span><br><span class="line">  <span class="keyword">size_t</span> internal_size = <span class="number">0U</span>;</span><br><span class="line">  <span class="keyword">uintptr_t</span> page_addr = <span class="number">0U</span>;</span><br><span class="line">  RunSlots* run_slots = <span class="literal">nullptr</span>;</span><br><span class="line">  <span class="keyword">uint8_t</span> page_type;</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// lock_guard&lt;mutex&gt; guard(global_lock_);</span></span><br><span class="line">    page_type = page_map_.GetPageTypeForAddr(obj_addr);</span><br><span class="line">  &#125;</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(LIKELY(page_type == kPRun)) &#123;</span><br><span class="line">      page_addr = ((<span class="keyword">uintptr_t</span>) obj_addr) &amp; (~((<span class="keyword">uintptr_t</span>) <span class="number">0xFFF</span>U));</span><br><span class="line">      run_slots = <span class="keyword">reinterpret_cast</span>&lt;RunSlots*&gt;(page_addr);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(LIKELY(page_type == kPLargeObj)) &#123;</span><br><span class="line">      FreeLargeObj(obj_addr, &amp;internal_size);</span><br><span class="line">      <span class="keyword">return</span> internal_size;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (page_type == kPRunRem) &#123;</span><br><span class="line">      <span class="comment">// lock_guard&lt;mutex&gt; guard(global_lock_);</span></span><br><span class="line">      page_addr = page_map_.GetRunStartFromAddr(obj_addr);</span><br><span class="line">      run_slots = <span class="keyword">reinterpret_cast</span>&lt;RunSlots*&gt;(page_addr);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      MRT_LOG(ALLOC, LVL_ERROR,</span><br><span class="line">          <span class="string">"invalid object address inside FreeObjInternal.  "</span> <span class="string">"obj_address: %p, page_type: %"</span> PRIu8 <span class="string">"\n"</span>,</span><br><span class="line">          (<span class="keyword">void</span>* )obj_addr, page_type);</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0U</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ROSIMPL_ASSERT(run_slots != <span class="literal">nullptr</span>, <span class="string">"runslots cannot be null in FreeObjInternal"</span>);</span><br><span class="line">  ROSIMPL_VERIFY_MAGIC_RUN(run_slots);</span><br><span class="line">  internal_size = run_slots-&gt;GetRunSize();</span><br><span class="line">  <span class="keyword">address_t</span> mem_addr = ROSIMPL_GET_ADDR_FROM_OBJ(obj_addr);</span><br><span class="line">  ROSIMPL_HPROF_FREE_RUN(run_slots-&gt;size_idx_, obj_addr);</span><br><span class="line">  (<span class="keyword">void</span>)memset_s((<span class="keyword">void</span>*)mem_addr,  internal_size, <span class="number">0</span>, internal_size);</span><br><span class="line">  <span class="keyword">if</span> (UNLIKELY(run_slots-&gt;size_idx_ &gt; kMaxTLocalIdx)) &#123;</span><br><span class="line">    lock_guard&lt;mutex&gt; guard(runLocks[run_slots-&gt;size_idx_]);</span><br><span class="line">    FreeObjFromRun(run_slots, obj_addr);</span><br><span class="line">    <span class="keyword">return</span> internal_size;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">bool</span> need_update_global = <span class="literal">false</span>;</span><br><span class="line">  &#123;</span><br><span class="line">     lock_guard&lt;mutex&gt; guard(runLocks[run_slots-&gt;size_idx_]);</span><br><span class="line">     <span class="comment">//lock_guard&lt;mutex&gt; guard2(run_slots-&gt;slots_lock);</span></span><br><span class="line">     <span class="keyword">if</span> (LIKELY(run_slots-&gt;IsLocal())) &#123;</span><br><span class="line">       <span class="keyword">address_t</span> mem_addr2 = ROSIMPL_GET_ADDR_FROM_OBJ(obj_addr);</span><br><span class="line">       run_slots-&gt;FreeSlotAsBulk(mem_addr2);</span><br><span class="line">       <span class="keyword">return</span> internal_size;</span><br><span class="line">     &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">//attention: when RunSlots has only 1 slot. there is a bug. it is not likely to use mutator to allocate that size space.</span></span><br><span class="line">      <span class="comment">//so we just ignore this case now.</span></span><br><span class="line">       <span class="keyword">address_t</span> mem_addr2 = ROSIMPL_GET_ADDR_FROM_OBJ(obj_addr);</span><br><span class="line">       <span class="keyword">bool</span> is_full = run_slots-&gt;IsFull();</span><br><span class="line">       run_slots-&gt;FreeSlot(mem_addr2);</span><br><span class="line">       <span class="keyword">if</span>(is_full) &#123; <span class="comment">// make sure the run_slot is in the non_full_runs</span></span><br><span class="line">         run_slots-&gt;need_full_to_nofull = <span class="literal">true</span>;</span><br><span class="line">	  need_update_global = <span class="literal">true</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span>(kReleaseFreeRun &amp;&amp; run_slots-&gt;IsCompletelyFree()) &#123;</span><br><span class="line">         run_slots-&gt;need_remove_empty = <span class="literal">true</span>;</span><br><span class="line">         need_update_global = <span class="literal">true</span>;</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(need_update_global) &#123;</span><br><span class="line">    lock_guard&lt;mutex&gt; guard(runLocks[run_slots-&gt;size_idx_]);</span><br><span class="line">    UpdateRunSlotsState(run_slots);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> internal_size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/01/08/rc/对象的释放过程/" data-id="cjqnx6bah000xxi07s4bhz8ne" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/01/08/rc/gc优化/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/01/08/rc/Maple Rc初始化分析 2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/01/08/未分类/Prt 项目记录/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/08/未分类/java解释器分析/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/08/收藏/博客收藏/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/08/未分类/Tracing Gc/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/08/shell/shell常用命令/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

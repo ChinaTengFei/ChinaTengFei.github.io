@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="lambda函数,lambda表达式标签（空格分隔）： c++11 lambda  lambda[ captures ] ( params ) -&amp;gt; ret requires(可选){要执行的代码   return}  captures:要引用外部的哪个参数,需要在次数声明 params:需要用到的参数需要在这里定理  比如可以写x```123456789101112131415161718">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2019/01/08/lambda/lambda函数,lambda表达式/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="lambda函数,lambda表达式标签（空格分隔）： c++11 lambda  lambda[ captures ] ( params ) -&amp;gt; ret requires(可选){要执行的代码   return}  captures:要引用外部的哪个参数,需要在次数声明 params:需要用到的参数需要在这里定理  比如可以写x```123456789101112131415161718">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-01-08T15:38:07.470Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="lambda函数,lambda表达式标签（空格分隔）： c++11 lambda  lambda[ captures ] ( params ) -&amp;gt; ret requires(可选){要执行的代码   return}  captures:要引用外部的哪个参数,需要在次数声明 params:需要用到的参数需要在这里定理  比如可以写x```123456789101112131415161718">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-lambda/lambda函数,lambda表达式" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/01/08/lambda/lambda函数,lambda表达式/" class="article-date">
+  <time datetime="2019-01-08T15:38:07.470Z" itemprop="datePublished">2019-01-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="lambda函数-lambda表达式"><a href="#lambda函数-lambda表达式" class="headerlink" title="lambda函数,lambda表达式"></a>lambda函数,lambda表达式</h1><p>标签（空格分隔）： c++11 lambda</p>
+<hr>
+<h1 id="lambda"><a href="#lambda" class="headerlink" title="lambda"></a>lambda</h1><p>[ captures ] ( params ) -&gt; ret requires(可选){要执行的代码   return}</p>
+<ul>
+<li>captures:要引用外部的哪个参数,需要在次数声明</li>
+<li>params:需要用到的参数需要在这里定理  比如可以写<figure class="highlight plain"><figcaption><span>x```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">+ -&gt;ret requires: 返回值类型,比如int</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">比如</span><br><span class="line">```c++</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    int i = 100;</span><br><span class="line">    std::function&lt;int(int)&gt; function = [i](int x) -&gt; int &#123;</span><br><span class="line"></span><br><span class="line">        std::cout &lt;&lt; &quot;Hello, World!&quot; &lt;&lt; x &lt;&lt;&quot;asas&quot;&lt;&lt;i&lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">        return 50;</span><br><span class="line">    &#125;;</span><br><span class="line">    std::cout &lt;&lt; function(2);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h1 id="std-function"><a href="#std-function" class="headerlink" title="std::function"></a>std::function</h1><p>可以接受一个lambda函数的一个类型,如上所示,泛型的类型是&lt;返回值类型(参数类型)&gt;,如上所示</p>
+<p>使用需要#include <functional></functional></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/01/08/lambda/lambda函数,lambda表达式/" data-id="cjqnx6baa000hxi07bgztvdsg" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/01/08/maple/shell常用命令/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/01/08/git/maple的repo/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/01/08/未分类/Prt 项目记录/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/08/未分类/java解释器分析/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/08/收藏/博客收藏/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/08/未分类/Tracing Gc/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/08/shell/shell常用命令/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

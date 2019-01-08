@@ -7,17 +7,17 @@
   
   <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="对象的释放过程标签（空格分隔）： rc  释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起 1234567891011121314void RosAllocImpl::FreeObj(address_t obj_addr) &amp;#123;  // release monitor  //__MRT_ASSERT(!hasWeakProxy(obj_addr), &quot;">
+  <meta name="description" content="对象的释放过程#标签（空格分隔）： rc  释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起 1234567891011121314void RosAllocImpl::FreeObj(address_t obj_addr) &amp;#123;  // release monitor  //__MRT_ASSERT(!hasWeakProxy(obj_addr),">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://yoursite.com/2019/01/08/rc/对象的释放过程/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="对象的释放过程标签（空格分隔）： rc  释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起 1234567891011121314void RosAllocImpl::FreeObj(address_t obj_addr) &amp;#123;  // release monitor  //__MRT_ASSERT(!hasWeakProxy(obj_addr), &quot;">
+<meta property="og:description" content="对象的释放过程#标签（空格分隔）： rc  释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起 1234567891011121314void RosAllocImpl::FreeObj(address_t obj_addr) &amp;#123;  // release monitor  //__MRT_ASSERT(!hasWeakProxy(obj_addr),">
 <meta property="og:locale" content="default">
 <meta property="og:updated_time" content="2019-01-08T15:38:07.476Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
-<meta name="twitter:description" content="对象的释放过程标签（空格分隔）： rc  释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起 1234567891011121314void RosAllocImpl::FreeObj(address_t obj_addr) &amp;#123;  // release monitor  //__MRT_ASSERT(!hasWeakProxy(obj_addr), &quot;">
+<meta name="twitter:description" content="对象的释放过程#标签（空格分隔）： rc  释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起 1234567891011121314void RosAllocImpl::FreeObj(address_t obj_addr) &amp;#123;  // release monitor  //__MRT_ASSERT(!hasWeakProxy(obj_addr),">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -76,7 +76,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="对象的释放过程"><a href="#对象的释放过程" class="headerlink" title="对象的释放过程"></a>对象的释放过程</h1><p>标签（空格分隔）： rc</p>
+        <h1><span id="dui-xiang-de-shi-fang-guo-cheng">对象的释放过程</span><a href="#dui-xiang-de-shi-fang-guo-cheng" class="header-anchor">#</a></h1><p>标签（空格分隔）： rc</p>
 <hr>
 <p>释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> RosAllocImpl::FreeObj(<span class="keyword">address_t</span> obj_addr) &#123;</span><br><span class="line">  <span class="comment">// release monitor</span></span><br><span class="line">  <span class="comment">//__MRT_ASSERT(!hasWeakProxy(obj_addr), "unexpected");</span></span><br><span class="line">  maplert::Allocator::ReleaseResource(obj_addr);</span><br><span class="line"></span><br><span class="line">  MRT_LOG(ALLOC, LVL_DEBUG, <span class="string">"Freeing object %p"</span>, (<span class="keyword">void</span>* )obj_addr);</span><br><span class="line">  <span class="keyword">size_t</span> obj_size = PreObjFree(obj_addr);</span><br><span class="line">  <span class="keyword">size_t</span> freed_bytes = <span class="number">0U</span>;</span><br><span class="line">  <span class="comment">// 主要释放操作在这里,这是一个宏:</span></span><br><span class="line">  <span class="comment">// #define JSAN_Free(obj, real_free_func, internal_size)internal_size = real_free_func(obj) </span></span><br><span class="line">  <span class="comment">// 调用FreeObjInternal方法释放对象非</span></span><br><span class="line">  JSAN_Free(obj_addr, FreeObjInternal, freed_bytes);</span><br><span class="line">  PostObjFree(freed_bytes, obj_size);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -84,7 +84,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/rc/对象的释放过程/" data-id="cjqnx6bah000xxi07s4bhz8ne" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/01/08/rc/对象的释放过程/" data-id="cjqnxtosy000w03076o54yh53" class="article-share-link">Share</a>
       
       
     </footer>
@@ -150,15 +150,15 @@
           </li>
         
           <li>
-            <a href="/2019/01/08/收藏/博客收藏/">(no title)</a>
-          </li>
-        
-          <li>
             <a href="/2019/01/08/未分类/Tracing Gc/">(no title)</a>
           </li>
         
           <li>
-            <a href="/2019/01/08/shell/shell常用命令/">(no title)</a>
+            <a href="/2019/01/08/收藏/博客收藏/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/08/vcs/maple的repo/">(no title)</a>
           </li>
         
       </ul>

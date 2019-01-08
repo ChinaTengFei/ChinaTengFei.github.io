@@ -2,635 +2,683 @@
 <html>
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
-  
-
-  
   <title>Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="keywords" content="">
+  <meta name="description" content="Hexo">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="description" content="Prt 项目记录项目简介Prt是怎么样的Prt是从0实现的一套Android Runtime， 依赖JvmTi需要引入jvm相关头文件，保证vm的可移植性 Classloaderclass文件解析">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/page/2/index.html">
+<meta property="og:url" content="http://yoursite.com/2019/01/08/未分类/Prt 项目记录/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Prt 项目记录项目简介Prt是怎么样的Prt是从0实现的一套Android Runtime， 依赖JvmTi需要引入jvm相关头文件，保证vm的可移植性 Classloaderclass文件解析">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-01-08T15:38:07.481Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
-  
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  
-  <link rel="stylesheet" href="/css/style.css">
+<meta name="twitter:description" content="Prt 项目记录项目简介Prt是怎么样的Prt是从0实现的一套Android Runtime， 依赖JvmTi需要引入jvm相关头文件，保证vm的可移植性 Classloaderclass文件解析">
+
+
+<link rel="icon" href="/img/avatar.jpg">
+
+<link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/hl_theme/atom-light.css">
+
+<link href="//cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet">
+<link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="/js/jquery.autocomplete.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+<script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+<script src="/js/iconfont.js"></script>
 </head>
-</html>
+<div style="display: none">
+  <input class="theme_disqus_on" value="false">
+  <input class="theme_preload_comment" value="false">
+</div>
 <body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
-      <div class="outer">
-        <section id="main">
-  
-    <article id="post-rc/gc优化" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/01/08/rc/gc优化/" class="article-date">
-  <time datetime="2019-01-08T15:38:07.476Z" itemprop="datePublished">2019-01-08</time>
+<aside class="nav mobile">
+    <div class="nav-left">
+        <a href="/" class="avatar_target">
+    <img class="avatar" src="/img/avatar.jpg">
 </a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1><span id="gc优化">gc优化</span></h1><p>标签（空格分隔）： rc TLMutator</p>
-<hr>
-<p>[RC]Avoid acquire TLMutator before real inc/decref<br>For example, IncRef doesn’t need TLMutator</p>
-<p>DecRef need mutator, if object is on heap.</p>
-<p>This can improve performance and avoid too early IncRef before Intitialize muators.</p>
-<p>总之就是在cinterface的MRT_DecRef里干掉TLMutator</p>
-<p>什么Mutator？</p>
-<p>Mutator是gc的具体实现的抽象</p>
-<p>Mutator的子类如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Mutator</span><br><span class="line"></span><br><span class="line">RCMutator--&gt;Mutator</span><br><span class="line"></span><br><span class="line">DeferralRCMutator--&gt;RCMutator</span><br><span class="line"></span><br><span class="line">NaiveRCMutator--&gt;RCMutator</span><br><span class="line"></span><br><span class="line">TracingMutator--&gt;Mutator</span><br><span class="line"></span><br><span class="line">ConMarkSweepMutator--&gt;TracingMutator</span><br><span class="line"></span><br><span class="line">MarkSweepMutator(MarkSweepMutator)--&gt;TracingMutator</span><br></pre></td></tr></table></figure>
-<p>TLMutator就是NaiveRCMutator</p>
+<div class="author">
+    <span>John Doe</span>
+</div>
 
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/rc/gc优化/" data-id="cjqny08cl000s0q0738ziztc5" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-rc/对象的释放过程" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/01/08/rc/对象的释放过程/" class="article-date">
-  <time datetime="2019-01-08T15:38:07.476Z" itemprop="datePublished">2019-01-08</time>
-</a>
+<div class="icon">
     
-  </div>
-  <div class="article-inner">
+        
+        <a title="rss" href="/atom.xml" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-rss"/>
+                </svg>
+            
+        </a>
+        
     
+        
+        <a title="github" href="https://github.com/yelog" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-github"/>
+                </svg>
+            
+        </a>
+        
     
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1><span id="对象的释放过程">对象的释放过程</span></h1><p>标签（空格分隔）： rc</p>
-<hr>
-<p>释放某个对象,会调用 RosAllocImpl::FreeObj方法,我们从此方法看起</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> RosAllocImpl::FreeObj(<span class="keyword">address_t</span> obj_addr) &#123;</span><br><span class="line">  <span class="comment">// release monitor</span></span><br><span class="line">  <span class="comment">//__MRT_ASSERT(!hasWeakProxy(obj_addr), "unexpected");</span></span><br><span class="line">  maplert::Allocator::ReleaseResource(obj_addr);</span><br><span class="line"></span><br><span class="line">  MRT_LOG(ALLOC, LVL_DEBUG, <span class="string">"Freeing object %p"</span>, (<span class="keyword">void</span>* )obj_addr);</span><br><span class="line">  <span class="keyword">size_t</span> obj_size = PreObjFree(obj_addr);</span><br><span class="line">  <span class="keyword">size_t</span> freed_bytes = <span class="number">0U</span>;</span><br><span class="line">  <span class="comment">// 主要释放操作在这里,这是一个宏:</span></span><br><span class="line">  <span class="comment">// #define JSAN_Free(obj, real_free_func, internal_size)internal_size = real_free_func(obj) </span></span><br><span class="line">  <span class="comment">// 调用FreeObjInternal方法释放对象非</span></span><br><span class="line">  JSAN_Free(obj_addr, FreeObjInternal, freed_bytes);</span><br><span class="line">  PostObjFree(freed_bytes, obj_size);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">size_t</span> RosAllocImpl::FreeObjInternal(<span class="keyword">address_t</span> obj_addr) &#123;</span><br><span class="line">  ROSIMPL_LOG_FREE_OBJ(obj_addr);</span><br><span class="line">  <span class="keyword">size_t</span> internal_size = <span class="number">0U</span>;</span><br><span class="line">  <span class="keyword">uintptr_t</span> page_addr = <span class="number">0U</span>;</span><br><span class="line">  RunSlots* run_slots = <span class="literal">nullptr</span>;</span><br><span class="line">  <span class="keyword">uint8_t</span> page_type;</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// lock_guard&lt;mutex&gt; guard(global_lock_);</span></span><br><span class="line">    page_type = page_map_.GetPageTypeForAddr(obj_addr);</span><br><span class="line">  &#125;</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(LIKELY(page_type == kPRun)) &#123;</span><br><span class="line">      page_addr = ((<span class="keyword">uintptr_t</span>) obj_addr) &amp; (~((<span class="keyword">uintptr_t</span>) <span class="number">0xFFF</span>U));</span><br><span class="line">      run_slots = <span class="keyword">reinterpret_cast</span>&lt;RunSlots*&gt;(page_addr);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(LIKELY(page_type == kPLargeObj)) &#123;</span><br><span class="line">      FreeLargeObj(obj_addr, &amp;internal_size);</span><br><span class="line">      <span class="keyword">return</span> internal_size;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (page_type == kPRunRem) &#123;</span><br><span class="line">      <span class="comment">// lock_guard&lt;mutex&gt; guard(global_lock_);</span></span><br><span class="line">      page_addr = page_map_.GetRunStartFromAddr(obj_addr);</span><br><span class="line">      run_slots = <span class="keyword">reinterpret_cast</span>&lt;RunSlots*&gt;(page_addr);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      MRT_LOG(ALLOC, LVL_ERROR,</span><br><span class="line">          <span class="string">"invalid object address inside FreeObjInternal.  "</span> <span class="string">"obj_address: %p, page_type: %"</span> PRIu8 <span class="string">"\n"</span>,</span><br><span class="line">          (<span class="keyword">void</span>* )obj_addr, page_type);</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0U</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ROSIMPL_ASSERT(run_slots != <span class="literal">nullptr</span>, <span class="string">"runslots cannot be null in FreeObjInternal"</span>);</span><br><span class="line">  ROSIMPL_VERIFY_MAGIC_RUN(run_slots);</span><br><span class="line">  internal_size = run_slots-&gt;GetRunSize();</span><br><span class="line">  <span class="keyword">address_t</span> mem_addr = ROSIMPL_GET_ADDR_FROM_OBJ(obj_addr);</span><br><span class="line">  ROSIMPL_HPROF_FREE_RUN(run_slots-&gt;size_idx_, obj_addr);</span><br><span class="line">  (<span class="keyword">void</span>)memset_s((<span class="keyword">void</span>*)mem_addr,  internal_size, <span class="number">0</span>, internal_size);</span><br><span class="line">  <span class="keyword">if</span> (UNLIKELY(run_slots-&gt;size_idx_ &gt; kMaxTLocalIdx)) &#123;</span><br><span class="line">    lock_guard&lt;mutex&gt; guard(runLocks[run_slots-&gt;size_idx_]);</span><br><span class="line">    FreeObjFromRun(run_slots, obj_addr);</span><br><span class="line">    <span class="keyword">return</span> internal_size;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">bool</span> need_update_global = <span class="literal">false</span>;</span><br><span class="line">  &#123;</span><br><span class="line">     lock_guard&lt;mutex&gt; guard(runLocks[run_slots-&gt;size_idx_]);</span><br><span class="line">     <span class="comment">//lock_guard&lt;mutex&gt; guard2(run_slots-&gt;slots_lock);</span></span><br><span class="line">     <span class="keyword">if</span> (LIKELY(run_slots-&gt;IsLocal())) &#123;</span><br><span class="line">       <span class="keyword">address_t</span> mem_addr2 = ROSIMPL_GET_ADDR_FROM_OBJ(obj_addr);</span><br><span class="line">       run_slots-&gt;FreeSlotAsBulk(mem_addr2);</span><br><span class="line">       <span class="keyword">return</span> internal_size;</span><br><span class="line">     &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">//attention: when RunSlots has only 1 slot. there is a bug. it is not likely to use mutator to allocate that size space.</span></span><br><span class="line">      <span class="comment">//so we just ignore this case now.</span></span><br><span class="line">       <span class="keyword">address_t</span> mem_addr2 = ROSIMPL_GET_ADDR_FROM_OBJ(obj_addr);</span><br><span class="line">       <span class="keyword">bool</span> is_full = run_slots-&gt;IsFull();</span><br><span class="line">       run_slots-&gt;FreeSlot(mem_addr2);</span><br><span class="line">       <span class="keyword">if</span>(is_full) &#123; <span class="comment">// make sure the run_slot is in the non_full_runs</span></span><br><span class="line">         run_slots-&gt;need_full_to_nofull = <span class="literal">true</span>;</span><br><span class="line">	  need_update_global = <span class="literal">true</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span>(kReleaseFreeRun &amp;&amp; run_slots-&gt;IsCompletelyFree()) &#123;</span><br><span class="line">         run_slots-&gt;need_remove_empty = <span class="literal">true</span>;</span><br><span class="line">         need_update_global = <span class="literal">true</span>;</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(need_update_global) &#123;</span><br><span class="line">    lock_guard&lt;mutex&gt; guard(runLocks[run_slots-&gt;size_idx_]);</span><br><span class="line">    UpdateRunSlotsState(run_slots);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> internal_size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/rc/对象的释放过程/" data-id="cjqny08cn000w0q07ux62eufh" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-rc/Maple Rc初始化分析 2" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/01/08/rc/Maple Rc初始化分析 2/" class="article-date">
-  <time datetime="2019-01-08T15:38:07.475Z" itemprop="datePublished">2019-01-08</time>
-</a>
+        
+        <a title="facebook" href="https://www.facebook.com/faker.tops" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-facebook"/>
+                </svg>
+            
+        </a>
+        
     
-  </div>
-  <div class="article-inner">
+        
     
+        
     
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1><span id="maple-rc初始化分析-2">Maple Rc初始化分析 2</span></h1><p>标签（空格分隔）： rc Rc初始化分析</p>
-<hr>
-<h1><span id="主要分析cancellablebackuptrace方法">主要分析CancellableBackupTrace方法</span></h1><ol>
-<li>通过ClearTracingMark清楚mark标志</li>
-<li>创建RootSet</li>
-<li>使用ScanRoots方法为Root赋值</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">root[对象的内存是如何分配的] --&gt; RunBackupTracing[RunBackupTracing垃圾清理方法]</span><br><span class="line">RunBackupTracing --&gt; ms.BackupTrace[ms.BackupTrace,ms指的MarkSweep,即标记清除]</span><br><span class="line">ms.BackupTrace --这里暂时只考虑非异步操作--- ScanRoots[ScanRoots,扫描根节点]</span><br><span class="line"></span><br><span class="line">ScanRoots --&quot;\\&quot;--- ScanStaticFieldRoots        </span><br><span class="line">ScanRoots --&quot;\\&quot;--- ScanExternalRoots</span><br><span class="line">ScanRoots --&quot;\\&quot;--- ScanStringRoots</span><br><span class="line">ScanRoots --&gt; ScanReferenceRoots</span><br><span class="line">ScanRoots --&gt; ScanAllocatorRoots</span><br><span class="line">ScanRoots --&gt; ScanClassLoaderRoots</span><br><span class="line">ScanRoots --&gt; ScanAllStacks</span><br><span class="line">ScanRoots --&gt; ScanLocalRefRoots  </span><br><span class="line">ScanRoots --&gt; ScanGlobalRefRoots  </span><br><span class="line">ScanRoots --&gt; ScanThreadExceptionRoots</span><br></pre></td></tr></table></figure>
-<ol start="4">
-<li>创建WorkStack</li>
-<li>把RootSet的元素放入work_stack中</li>
-<li>针对work_stack执行DoTransitiveClosure</li>
-<li>针对work_stack执行DoResurrection</li>
-<li>再次针对work_stack执行DoTransitiveClosure</li>
-<li>执行Sweep方法进行释放</li>
-<li>UpdateRootSetCapacity更新rootSet</li>
-<li>UpdateWorkStackCapacity更新work_stack<br>|1|2<br>|-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/rc/Maple Rc初始化分析 2/" data-id="cjqny08cj000o0q07cc6qkofe" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-rc/Maple Rc对象创建" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/01/08/rc/Maple Rc对象创建/" class="article-date">
-  <time datetime="2019-01-08T15:38:07.475Z" itemprop="datePublished">2019-01-08</time>
-</a>
+        
+        <a title="instagram" href="https://www.facebook.com/faker.tops" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-instagram"/>
+                </svg>
+            
+        </a>
+        
     
-  </div>
-  <div class="article-inner">
+        
+        <a title="reddit" href="https://www.reddit.com/user/yelog/" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-reddit"/>
+                </svg>
+            
+        </a>
+        
     
+        
+        <a title="weibo" href="http://weibo.com/u/2307534817" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-weibo"/>
+                </svg>
+            
+        </a>
+        
     
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1><span id="maple-rc对象创建">Maple Rc对象创建</span></h1><p>标签（空格分隔）： rc</p>
-<hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">obj_create[对象创建] --&gt; NewObj[RosAllocImpl::NewObj]</span><br><span class="line">NewObj --&gt; AllocateObjInternal</span><br><span class="line">AllocateObjInternal--&gt; AllocFromRun_</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/rc/Maple Rc对象创建/" data-id="cjqny08ck000q0q07qrnf1gtg" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
+        
+        <a title="jianshu" href="https://www.jianshu.com/u/ff56736de7cf" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-jianshu"/>
+                </svg>
+            
+        </a>
+        
+    
+        
+        <a title="zhihu" href="https://www.zhihu.com/people/jaytp/activities" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-zhihu"/>
+                </svg>
+            
+        </a>
+        
+    
+        
+    
+        
+        <a title="oschina" href="https://my.oschina.net/yelog" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-oschina"/>
+                </svg>
+            
+        </a>
+        
+    
+        
+    
+        
+        <a title="email" href="mailto:jaytp@qq.com" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-email"/>
+                </svg>
+            
+        </a>
+        
+    
+</div>
 
 
-  
-    <article id="post-rc/python的循环应用回收算法1" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/01/08/rc/python的循环应用回收算法1/" class="article-date">
-  <time datetime="2019-01-08T15:38:07.474Z" itemprop="datePublished">2019-01-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1><span id="python的循环应用回收算法1">python的循环应用回收算法1</span></h1><p>标签（空格分隔）： rc python的循环应用回收算法</p>
-<hr>
-<p>Python中的垃圾回收是以引用计数为主，标记-清除和分代收集为辅。引用计数最大缺陷就是循环引用的问题，所以Python采用了辅助方法。</p>
-<p>名词标注</p>
+
 <ul>
-<li>容器对象：可能被循环引用的对象，比如集合，数组</li>
-<li>非容器对象：不可能成为循环引用的，比如字符串，数值。</li>
+    <li class="all active">全部文章</li>
+    
 </ul>
-<p>注1：python的循环引用回收一定程度上使用了分代回收，我没有讲到</p>
-<hr>
-<ol>
-<li><p>这是我们的对象关系图，我们首先确定这个是对象关系图有需要回收的循环引用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root--&gt;a[a:1]</span><br><span class="line">a--&gt;c[c:1]</span><br><span class="line">c--&gt;d[d:2]</span><br><span class="line">a--&gt;d</span><br><span class="line"></span><br><span class="line">b[b:1]--&gt;e[e:1]</span><br><span class="line">e--&gt;f[f:1]</span><br><span class="line">f--&gt;b</span><br><span class="line"></span><br><span class="line">d--&gt;x[x:2]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>把计数器备份一份，因为执行一份：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root--&gt;a[a:1,1]</span><br><span class="line">a--&gt;c[c:1,1]</span><br><span class="line">c--&gt;d[d:2,2]</span><br><span class="line">a--&gt;d</span><br><span class="line"></span><br><span class="line">b[b:1,1]--&gt;e[e:1,1]</span><br><span class="line">e--&gt;f[f:1,1]</span><br><span class="line">f--&gt;b</span><br><span class="line">d--&gt;x[x:2,2]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在对象创建的时候，做一次备份，把对象用双向链表连接起来，做一次备份</p>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root--&gt;a[a:1,1]</span><br><span class="line">a--&gt;c[c:1,1]</span><br><span class="line">c--&gt;d[d:2,2]</span><br><span class="line">a--&gt;d</span><br><span class="line"></span><br><span class="line">b[b:1,1]--&gt;e[e:1,1]</span><br><span class="line">e--&gt;f[f:1,1]</span><br><span class="line">f--&gt;b</span><br><span class="line">d--&gt;x[x:2,2]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure>
-<p>然后把备份的计数器都减1，root直接引用的对象除外（如：a）,即除root直接引用的对象，所有对象的备份计数器都是0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root--&gt;a[a:1,1]</span><br><span class="line">a--&gt;c[c:1,0]</span><br><span class="line">c--&gt;d[d:2,0]</span><br><span class="line">a--&gt;d</span><br><span class="line"></span><br><span class="line">b--&gt;e[e:1,0]</span><br><span class="line">e--&gt;f[f:1,0]</span><br><span class="line">f--&gt;b[1,0]</span><br><span class="line"></span><br><span class="line">d--&gt;x[x:2,0]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure></p>
-<p>b,e,f形成循环引用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root--&gt;a[a:1,1]</span><br><span class="line">a--&gt;c[c:1,0]</span><br><span class="line">c--&gt;d[d:1,0]</span><br><span class="line">d--&gt;a</span><br><span class="line">b[b:1,0]--&gt;e[e:1,0]</span><br><span class="line">e--&gt;f[f:1,0]</span><br><span class="line">f--&gt;b</span><br><span class="line"></span><br><span class="line">d--&gt;x[2,0]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure>
-<p>此时循环引用b,e,f已经与root没有任何引用关系了,理想情况下，执行gc的时候应该释放掉这个循环引用</p>
-<p>在对象生成的时候我们把对象连接成链表</p>
-<p>我们把引用关系分成两类</p>
-<ol>
-<li>备份计数器为0并且不可达</li>
-<li>可达并且计数器不为0</li>
-</ol>
-<p>结合上述图标，按照此规则分类<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">可达并且计数器不为0:</span><br><span class="line">root--&gt;a[a:1,1]</span><br><span class="line">a--&gt;c[c:1,0]</span><br><span class="line">c--&gt;d[d:1,0]</span><br><span class="line">d--&gt;a</span><br><span class="line">备份计数器为0并且不可达:</span><br><span class="line">b[b:1,0]--&gt;e[e:1,0]</span><br><span class="line">e--&gt;f[f:1,0]</span><br><span class="line">f--&gt;b</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">d--&gt;x[2,0]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure></p>
-
-      
+<div class="left-bottom">
+    <div class="menus">
+    
+    
+    
+    
     </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/rc/python的循环应用回收算法1/" data-id="cjqny08cm000u0q073273abwd" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
+    <div><a style="border-right: 1px solid #fff; width: 49%" class="about site_url" href="/about">关于</a><a style="width: 50%" class="friends">友链</a></div>
+</div>
+<input type="hidden" id="yelog_site_posts_number" value="40">
 
-
-  
-    <article id="post-rc/Maple Rc初始化分析 1" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/01/08/rc/Maple Rc初始化分析 1/" class="article-date">
-  <time datetime="2019-01-08T15:38:07.473Z" itemprop="datePublished">2019-01-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1><span id="maple-rc初始化分析-1">Maple Rc初始化分析 1</span></h1><p>标签（空格分隔）： rc Rc初始化分析</p>
-<hr>
-<h2><span id="标题">标题</span></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">init[对象的内存是如何分配的] --&gt; root[gc学习大纲]</span><br><span class="line">collocInit[垃圾回收如何记录对象] --&gt; root</span><br><span class="line">free[对象的内存是如何释放] --&gt; root</span><br></pre></td></tr></table></figure>
-<ol>
-<li>编写一个简单的new对象的.java文件</li>
-<li>编译成class</li>
-<li>使用sdk的dx转换成dex</li>
-<li>使用sdk的dexhump工具查看dex文件内容</li>
-<li>发现new-instan## 标题 ##ce字节码命令</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">root --&gt; runtime[runtime]</span><br><span class="line">runtime[runtime] --&gt; GCImpl.init</span><br><span class="line">GCImpl.init --&gt; MRT_GCInitGlobal</span><br><span class="line">MRT_GCInitGlobal --&gt; g_the_allocator.Init</span><br><span class="line">g_the_allocator.Init --&gt; alloc_space_.Init</span><br><span class="line">alloc_space_.Init --&gt; MemMap::MapMemory[MemMap::MapMemory分配堆内存]</span><br><span class="line">g_the_allocator.Init --&gt; page_map_.Init[page_map_.Init初始化pagemap]</span><br><span class="line">page_map_.Init[page_map_.Init初始化pagemap] --&gt; sudo</span><br><span class="line"></span><br><span class="line">MRT_GCInitGlobal --&gt; g_the_collector.Init</span><br><span class="line">g_the_collector.Init --&gt; RCCollector::Init</span><br><span class="line">RCCollector::Init --&gt; sudo</span><br><span class="line"></span><br><span class="line">g_the_collector.Init --&gt; StartThread</span><br><span class="line"></span><br><span class="line">StartThread --&gt; ms.StartThread</span><br><span class="line">StartThread --&gt; backupTracing[开启NaiveRCCollector::BackupTracingThreadEntry线程]</span><br><span class="line"></span><br><span class="line">backupTracing --&gt; NaiveRCCollector.BackupTracingThreadRun</span><br><span class="line"></span><br><span class="line">NaiveRCCollector.BackupTracingThreadRun --&gt; WaitForEvent;</span><br><span class="line"></span><br><span class="line">WaitForEvent --&quot;event == RcCollection || event == FullCollection&quot;--- RunBackupTracing</span><br><span class="line"></span><br><span class="line">RunBackupTracing --&gt; ms.BackupTrace[ms.BackupTrace 执行垃圾清理]</span><br><span class="line"></span><br><span class="line">ms.BackupTrace --&gt; CancellableBackupTrace</span><br><span class="line"></span><br><span class="line">CancellableBackupTrace --&gt; parallel_gc</span><br><span class="line"></span><br><span class="line">parallel_gc --true--&gt; ParallelScanRoots</span><br><span class="line">ParallelScanRoots --&gt; ParallelResurrection</span><br><span class="line">ParallelResurrection--&gt; ParallelTransitiveClosure</span><br><span class="line">ParallelTransitiveClosure --&gt; ParallelSweep</span><br><span class="line">parallel_gc --false--&gt; ScanRoots</span><br><span class="line">ScanRoots--&gt;DoResurrection</span><br><span class="line">DoResurrection--&gt;DoTransitiveClosure</span><br><span class="line">DoTransitiveClosure--&gt;Sweep</span><br><span class="line">Sweep--&gt;g_the_allocator.FreeAllIf</span><br><span class="line">g_the_allocator.FreeAllIf--&gt;FreeObjsFromRun</span><br><span class="line">FreeObjsFromRun--&gt;PreObjFree</span><br><span class="line">PreObjFree--&gt;memset_s[memset_s清0]</span><br><span class="line">memset_s--&gt;FreeSlot[FreeSlot把此对象地址放到空闲链表]</span><br><span class="line">FreeSlot--&gt;PostObjFree[PostObjFree通知]</span><br></pre></td></tr></table></figure>
-      
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
     </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/rc/Maple Rc初始化分析 1/" data-id="cjqny08cj000n0q07omdztz5u" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-rc/python的循环应用回收算法" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/01/08/rc/python的循环应用回收算法/" class="article-date">
-  <time datetime="2019-01-08T15:38:07.473Z" itemprop="datePublished">2019-01-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1><span id="python的循环应用回收算法">python的循环应用回收算法</span></h1><p>标签（空格分隔）： python的循环应用回收算法 rc</p>
-<hr>
-<blockquote>
-<p>“标记-清除”是为了解决循环引用的问题。可以包含其他对象引用的容器对象（比如：list，set，dict，class，instance）都可能产生循环引用。<br>我们必须承认一个事实，如果两个对象的引用计数都为1，但是仅仅存在他们之间的循环引用，那么这两个对象都是需要被回收的，也就是说，它们的引用计数虽然表现为非0，但实际上有效的引用计数为0。我们必须先将循环引用摘掉，那么这两个对象的有效计数就现身了。假设两个对象为A、B，我们从A出发，因为它有一个对B的引用，则将B的引用计数减1；然后顺着引用达到B，因为B有一个对A的引用，同样将A的引用减1，这样，就完成了循环引用对象间环摘除。<br>但是这样就有一个问题，假设对象A有一个对象引用C，而C没有引用A，如果将C计数引用减1，而最后A并没有被回收，显然，我们错误的将C的引用计数减1，这将导致在未来的某个时刻出现一个对C的悬空引用。这就要求我们必须在A没有被删除的情况下复原C的引用计数，如果采用这样的方案，那么维护引用计数的复杂度将成倍增加。</p>
-<p>原理：“标记-清除”采用了更好的做法，我们并不改动真实的引用计数，而是将集合中对象的引用计数复制一份副本，改动该对象引用的副本。对于副本做任何的改动，都不会影响到对象生命走起的维护。<br>这个计数副本的唯一作用是寻找root object集合（该集合中的对象是不能被回收的）。当成功寻找到root object集合之后，首先将现在的内存链表一分为二，一条链表中维护root object集合，成为root链表，而另外一条链表中维护剩下的对象，成为unreachable链表。之所以要剖成两个链表，是基于这样的一种考虑：现在的unreachable可能存在被root链表中的对象，直接或间接引用的对象，这些对象是不能被回收的，一旦在标记的过程中，发现这样的对象，就将其从unreachable链表中移到root链表中；当完成标记后，unreachable链表中剩下的所有对象就是名副其实的垃圾对象了，接下来的垃圾回收只需限制在unreachable链表中即可。</p>
-</blockquote>
-<hr>
-<ol>
-<li>生成链表A</li>
-<li>在容器对象创建的时候把容器对象添加到链表A中</li>
-<li><p>在释放循环引用容器对象前，有些容器对象可能失去引用关系（count为0），但是在A链表中这个节点还是存在的，那么此时我们需要在A链表中剔除已经释放的容器对象</p>
-</li>
-<li><p>在分配对象时检测内存空间是否不足，如果不足需要检测A链表中是否存在循环引用容器对象</p>
-</li>
-<li>把对象的count复制到容器对象的count里，做一个备份<br> 在python里，普通对象和容器对象是两个结构体，换句话说，只有容器对象才需要复制count</li>
-<li>通过遍历链表A把所有容器对象的备份count自减1，root对象除外<br> 因为对象的类型是不确定的，是否真的应该自减，比如root对象就不需要自减，比如用户有手动实现容器对象的话，那么也    会与我们的循环引用不兼容。这里python的做法是使用访问者模式，把自减的方法传递给具体容器对象，让具体实现去决定    是否应该执行自减。<strong>精髓</strong></li>
-<li>因为链表的head是写死的，我们可以直接访问，其实这个head就是root，</li>
-<li>我们直接访问链表的head，如果head是大于0，那么我们就认为这个链表里所有的对象都是可达的。如果root等于0，那么这    个链表的所有对象就是循环引用了，<br> <strong>对比传统的数据结构遍历，此方法的效率，要高的多。</strong></li>
-<li>在不可达链表中移除带有终结器的对象。</li>
-<li>把不可达链表的所有对象释放掉。<ol>
-<li>释放的步骤如下<ol>
-<li>自增</li>
-<li>释放</li>
-<li>自减<br>考虑到循环引用是多个对象相互引用，可能会因为释放操作造成自身清除，所以在count不为0的时候进行释放操作。</li>
-</ol>
-</li>
-<li>对象可能会因为某种原因释放失败，需要把它重新放入到A链表中去。</li>
-</ol>
-</li>
-</ol>
-<p>#注：</p>
-<ol>
-<li><p>终结器，Object类的finalize方法叫做终结器，这种循环引用没办法解决，比如有两个对象，a和b，a的finalize方法访问b，b的finalize方法访问a，先释放哪个都不对。</p>
-</li>
-<li><p>分代<br> python的实现里是有分代的实现的，这篇文章面向新人，分代不是主线，简单为主。</p>
-</li>
-</ol>
-<p>总结：</p>
-<pre><code>1. 复制count，清空count，就是为了分离可达对象和不可达对象
-2. python的count的类型使用了ssize_t的类型，该类型在32位环境下是int，在64位环境下是long
-    该类型允许为负数，仅仅是为了debug方便。可以把count当做错误信息输出。
-</code></pre><blockquote>
-<p>官方文档</p>
-<p><a href="https://docs.python.org/2/faq/design.html#how-does-python-manage-memory" target="_blank" rel="noopener">https://docs.python.org/2/faq/design.html#how-does-python-manage-memory</a></p>
-<p><a href="http://arctrix.com/nas/python/gc/" target="_blank" rel="noopener">http://arctrix.com/nas/python/gc/</a></p>
-<p><a href="https://github.com/python/cpython/blob/3.7/Doc/c-api/gcsupport.rst" target="_blank" rel="noopener">https://github.com/python/cpython/blob/3.7/Doc/c-api/gcsupport.rst</a></p>
-<p>相关文档</p>
-<p><a href="http://www.wklken.me/posts/2015/09/29/python-source-gc.html" target="_blank" rel="noopener">http://www.wklken.me/posts/2015/09/29/python-source-gc.html</a></p>
-</blockquote>
-
-      
+    <div class="nav-right">
+        <div class="friends-area">
+    <div class="friends-title">
+        友情链接
+        <i class="back-title-list"></i>
     </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/rc/python的循环应用回收算法/" data-id="cjqny08cl000t0q07mztar4fk" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-rc/rc的环问题" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/01/08/rc/rc的环问题/" class="article-date">
-  <time datetime="2019-01-08T15:38:07.473Z" itemprop="datePublished">2019-01-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1><span id="rc的环问题">rc的环问题</span></h1><p>标签（空格分隔）： rc</p>
-<hr>
-<p>rc的应用<br>引用计数法主要用在 c++ 标准库的 std::shared_ptr 、微软的 COM 、python，Go，Objective-C 和 PHP 中。</p>
-<ol>
-<li>Mark-Sweep法</li>
-<li>三色标记法</li>
-<li>分代收集法</li>
-</ol>
-
-      
+    <div class="friends-content">
+        <ul>
+            
+            <li><a target="_blank" href="http://yelog.org/">叶落阁</a></li>
+            
+        </ul>
     </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/rc/rc的环问题/" data-id="cjqny08cn000v0q07tieyqk7f" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-python的循环应用回收算法/python的循环应用回收算法" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/01/08/python的循环应用回收算法/python的循环应用回收算法/" class="article-date">
-  <time datetime="2019-01-08T15:38:07.472Z" itemprop="datePublished">2019-01-08</time>
-</a>
+</div>
+        <div class="title-list">
+    <form onkeydown="if(event.keyCode==13){return false;}">
+        <input class="search" type="text" placeholder="Search..." autocomplete="off" id="local-search-input">
+        <i class="cross"></i>
+        <span>
+            <label for="tagswitch">Tags:</label>
+            <input id="tagswitch" type="checkbox" style="display: none">
+            <i id="tagsWitchIcon"></i>
+        </span>
+    </form>
+    <div class="tags-list">
     
-  </div>
-  <div class="article-inner">
+    <div class="clearfix"></div>
+</div>
+
     
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1><span id="python的循环应用回收算法">python的循环应用回收算法</span></h1><p>标签（空格分隔）： python的循环应用回收算法 rc</p>
-<hr>
-<blockquote>
-<p>“标记-清除”是为了解决循环引用的问题。可以包含其他对象引用的容器对象（比如：list，set，dict，class，instance）都可能产生循环引用。<br>我们必须承认一个事实，如果两个对象的引用计数都为1，但是仅仅存在他们之间的循环引用，那么这两个对象都是需要被回收的，也就是说，它们的引用计数虽然表现为非0，但实际上有效的引用计数为0。我们必须先将循环引用摘掉，那么这两个对象的有效计数就现身了。假设两个对象为A、B，我们从A出发，因为它有一个对B的引用，则将B的引用计数减1；然后顺着引用达到B，因为B有一个对A的引用，同样将A的引用减1，这样，就完成了循环引用对象间环摘除。<br>但是这样就有一个问题，假设对象A有一个对象引用C，而C没有引用A，如果将C计数引用减1，而最后A并没有被回收，显然，我们错误的将C的引用计数减1，这将导致在未来的某个时刻出现一个对C的悬空引用。这就要求我们必须在A没有被删除的情况下复原C的引用计数，如果采用这样的方案，那么维护引用计数的复杂度将成倍增加。</p>
-<p>原理：“标记-清除”采用了更好的做法，我们并不改动真实的引用计数，而是将集合中对象的引用计数复制一份副本，改动该对象引用的副本。对于副本做任何的改动，都不会影响到对象生命走起的维护。<br>这个计数副本的唯一作用是寻找root object集合（该集合中的对象是不能被回收的）。当成功寻找到root object集合之后，首先将现在的内存链表一分为二，一条链表中维护root object集合，成为root链表，而另外一条链表中维护剩下的对象，成为unreachable链表。之所以要剖成两个链表，是基于这样的一种考虑：现在的unreachable可能存在被root链表中的对象，直接或间接引用的对象，这些对象是不能被回收的，一旦在标记的过程中，发现这样的对象，就将其从unreachable链表中移到root链表中；当完成标记后，unreachable链表中剩下的所有对象就是名副其实的垃圾对象了，接下来的垃圾回收只需限制在unreachable链表中即可。</p>
-</blockquote>
-<hr>
-<ol>
-<li>生成链表A</li>
-<li>在容器对象创建的时候把容器对象添加到链表A中</li>
-<li><p>在释放循环引用容器对象前，有些容器对象可能失去引用关系（count为0），但是在A链表中这个节点还是存在的，那么此时我们需要在A链表中剔除已经释放的容器对象</p>
-</li>
-<li><p>在分配对象时检测内存空间是否不足，如果不足需要检测A链表中是否存在循环引用容器对象</p>
-</li>
-<li>把对象的count复制到容器对象的count里，做一个备份<br> 在python里，普通对象和容器对象是两个结构体，换句话说，只有容器对象才需要复制count</li>
-<li>通过遍历链表A把所有容器对象的备份count自减1，root对象除外<br> 因为对象的类型是不确定的，是否真的应该自减，比如root对象就不需要自减，比如用户有手动实现容器对象的话，那么也    会与我们的循环引用不兼容。这里python的做法是使用访问者模式，把自减的方法传递给具体容器对象，让具体实现去决定    是否应该执行自减。<strong>精髓</strong></li>
-<li>因为链表的head是写死的，我们可以直接访问，其实这个head就是root，</li>
-<li>我们直接访问链表的head，如果head是大于0，那么我们就认为这个链表里所有的对象都是可达的。如果root等于0，那么这    个链表的所有对象就是循环引用了，<br> <strong>对比传统的数据结构遍历，此方法的效率，要高的多。</strong></li>
-<li>在不可达链表中移除带有终结器的对象。</li>
-<li>把不可达链表的所有对象释放掉。<ol>
-<li>释放的步骤如下<ol>
-<li>自增</li>
-<li>释放</li>
-<li>自减<br>考虑到循环引用是多个对象相互引用，可能会因为释放操作造成自身清除，所以在count不为0的时候进行释放操作。</li>
-</ol>
-</li>
-<li>对象可能会因为某种原因释放失败，需要把它重新放入到A链表中去。</li>
-</ol>
-</li>
-</ol>
-<p>#注：</p>
-<ol>
-<li><p>终结器，Object类的finalize方法叫做终结器，这种循环引用没办法解决，比如有两个对象，a和b，a的finalize方法访问b，b的finalize方法访问a，先释放哪个都不对。</p>
-</li>
-<li><p>分代<br> python的实现里是有分代的实现的，这篇文章面向新人，分代不是主线，简单为主。</p>
-</li>
-</ol>
-<p>总结：</p>
-<pre><code>1. 复制count，清空count，就是为了分离可达对象和不可达对象
-2. python的count的类型使用了ssize_t的类型，该类型在32位环境下是int，在64位环境下是long
-    该类型允许为负数，仅仅是为了debug方便。可以把count当做错误信息输出。
-</code></pre><blockquote>
-<p>官方文档</p>
-<p><a href="https://docs.python.org/2/faq/design.html#how-does-python-manage-memory" target="_blank" rel="noopener">https://docs.python.org/2/faq/design.html#how-does-python-manage-memory</a></p>
-<p><a href="http://arctrix.com/nas/python/gc/" target="_blank" rel="noopener">http://arctrix.com/nas/python/gc/</a></p>
-<p><a href="https://github.com/python/cpython/blob/3.7/Doc/c-api/gcsupport.rst" target="_blank" rel="noopener">https://github.com/python/cpython/blob/3.7/Doc/c-api/gcsupport.rst</a></p>
-<p>相关文档</p>
-<p><a href="http://www.wklken.me/posts/2015/09/29/python-source-gc.html" target="_blank" rel="noopener">http://www.wklken.me/posts/2015/09/29/python-source-gc.html</a></p>
-</blockquote>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/python的循环应用回收算法/python的循环应用回收算法/" data-id="cjqny08ci000k0q07jza95gnm" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-python的循环应用回收算法/python的循环应用回收算法1" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/01/08/python的循环应用回收算法/python的循环应用回收算法1/" class="article-date">
-  <time datetime="2019-01-08T15:38:07.472Z" itemprop="datePublished">2019-01-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1><span id="python的循环应用回收算法1">python的循环应用回收算法1</span></h1><p>标签（空格分隔）： rc python的循环应用回收算法</p>
-<hr>
-<p>Python中的垃圾回收是以引用计数为主，标记-清除和分代收集为辅。引用计数最大缺陷就是循环引用的问题，所以Python采用了辅助方法。</p>
-<p>名词标注</p>
-<ul>
-<li>容器对象：可能被循环引用的对象，比如集合，数组</li>
-<li>非容器对象：不可能成为循环引用的，比如字符串，数值。</li>
-</ul>
-<p>注1：python的循环引用回收一定程度上使用了分代回收，我没有讲到</p>
-<hr>
-<ol>
-<li><p>这是我们的对象关系图，我们首先确定这个是对象关系图有需要回收的循环引用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root--&gt;a[a:1]</span><br><span class="line">a--&gt;c[c:1]</span><br><span class="line">c--&gt;d[d:2]</span><br><span class="line">a--&gt;d</span><br><span class="line"></span><br><span class="line">b[b:1]--&gt;e[e:1]</span><br><span class="line">e--&gt;f[f:1]</span><br><span class="line">f--&gt;b</span><br><span class="line"></span><br><span class="line">d--&gt;x[x:2]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>把计数器备份一份，因为执行一份：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root--&gt;a[a:1,1]</span><br><span class="line">a--&gt;c[c:1,1]</span><br><span class="line">c--&gt;d[d:2,2]</span><br><span class="line">a--&gt;d</span><br><span class="line"></span><br><span class="line">b[b:1,1]--&gt;e[e:1,1]</span><br><span class="line">e--&gt;f[f:1,1]</span><br><span class="line">f--&gt;b</span><br><span class="line">d--&gt;x[x:2,2]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在对象创建的时候，做一次备份，把对象用双向链表连接起来，做一次备份</p>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root--&gt;a[a:1,1]</span><br><span class="line">a--&gt;c[c:1,1]</span><br><span class="line">c--&gt;d[d:2,2]</span><br><span class="line">a--&gt;d</span><br><span class="line"></span><br><span class="line">b[b:1,1]--&gt;e[e:1,1]</span><br><span class="line">e--&gt;f[f:1,1]</span><br><span class="line">f--&gt;b</span><br><span class="line">d--&gt;x[x:2,2]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure>
-<p>然后把备份的计数器都减1，root直接引用的对象除外（如：a）,即除root直接引用的对象，所有对象的备份计数器都是0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root--&gt;a[a:1,1]</span><br><span class="line">a--&gt;c[c:1,0]</span><br><span class="line">c--&gt;d[d:2,0]</span><br><span class="line">a--&gt;d</span><br><span class="line"></span><br><span class="line">b--&gt;e[e:1,0]</span><br><span class="line">e--&gt;f[f:1,0]</span><br><span class="line">f--&gt;b[1,0]</span><br><span class="line"></span><br><span class="line">d--&gt;x[x:2,0]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure></p>
-<p>b,e,f形成循环引用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root--&gt;a[a:1,1]</span><br><span class="line">a--&gt;c[c:1,0]</span><br><span class="line">c--&gt;d[d:1,0]</span><br><span class="line">d--&gt;a</span><br><span class="line">b[b:1,0]--&gt;e[e:1,0]</span><br><span class="line">e--&gt;f[f:1,0]</span><br><span class="line">f--&gt;b</span><br><span class="line"></span><br><span class="line">d--&gt;x[2,0]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure>
-<p>此时循环引用b,e,f已经与root没有任何引用关系了,理想情况下，执行gc的时候应该释放掉这个循环引用</p>
-<p>在对象生成的时候我们把对象连接成链表</p>
-<p>我们把引用关系分成两类</p>
-<ol>
-<li>备份计数器为0并且不可达</li>
-<li>可达并且计数器不为0</li>
-</ol>
-<p>结合上述图标，按照此规则分类<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">可达并且计数器不为0:</span><br><span class="line">root--&gt;a[a:1,1]</span><br><span class="line">a--&gt;c[c:1,0]</span><br><span class="line">c--&gt;d[d:1,0]</span><br><span class="line">d--&gt;a</span><br><span class="line">备份计数器为0并且不可达:</span><br><span class="line">b[b:1,0]--&gt;e[e:1,0]</span><br><span class="line">e--&gt;f[f:1,0]</span><br><span class="line">f--&gt;b</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">d--&gt;x[2,0]</span><br><span class="line">f--&gt;x</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/01/08/python的循环应用回收算法/python的循环应用回收算法1/" data-id="cjqny08ci000l0q072hskwpzk" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-
-
-  <nav id="page-nav">
-    
-    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
-  </nav>
-
-</section>
+    <nav id="title-list-nav">
         
-          <aside id="sidebar">
-  
-    
-
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li></ul>
+        <a class="" href="/2019/01/08/hello-world/" data-tag="" data-author="">
+            <span class="post-title" title="Hello World">Hello World</span>
+            <span class="post-date" title="2019-01-08 23:20:05">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/test/" data-tag="" data-author="">
+            <span class="post-title" title="test">test</span>
+            <span class="post-date" title="2019-01-08 23:37:40">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/Android/Android arm 指令集 handbook、/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/Prt/在此处输入标题/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/RC-1/TLMutator分析/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/Rc初始化分析/Maple Rc初始化分析 1/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/Rc初始化分析/Maple Rc初始化分析 2/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/Runtime/android things 的 Runtinme 初始化/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/TLMutator/TLMutator分析/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/TLMutator/gc优化/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/androidThings/android things 的 Runtinme 初始化/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/arm/Android arm 指令集 handbook、/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/asm/Android arm 指令集 handbook、/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/gc/博客收藏/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/c++11/lambda函数,lambda表达式/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/git/maple的repo/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/init/android things 的 Runtinme 初始化/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/lambda/lambda函数,lambda表达式/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/maple/maple的repo/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/maple/shell常用命令/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/python的循环应用回收算法/python的循环应用回收算法/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/python的循环应用回收算法/python的循环应用回收算法1/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/rc/GC相关技术大纲/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/rc/Maple Rc初始化分析 1/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/rc/Maple Rc初始化分析 2/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/rc/Maple Rc大体流程/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/rc/Maple Rc对象创建/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/rc/Maple Rc评分标准/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/rc/gc优化/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/rc/python的循环应用回收算法/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/rc/python的循环应用回收算法1/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/rc/rc的环问题/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/rc/对象的释放过程/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/repo/maple的repo/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/shell/shell常用命令/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/vcs/maple的repo/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/收藏/博客收藏/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/未分类/Prt 项目记录/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/未分类/Tracing Gc/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+        <a class="" href="/2019/01/08/未分类/java解释器分析/" data-tag="" data-author="">
+            <span class="post-title" title=""></span>
+            <span class="post-date" title="2019-01-08 23:38:07">2019/01/08</span>
+        </a>
+        
+    </nav>
+</div>
     </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2019/01/08/未分类/Prt 项目记录/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/08/未分类/java解释器分析/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/08/收藏/博客收藏/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/08/未分类/Tracing Gc/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/08/shell/shell常用命令/">(no title)</a>
-          </li>
-        
-      </ul>
+    <div class="hide-list">
+        <div class="semicircle">
+            <div class="brackets first"><</div>
+            <div class="brackets">&gt;</div>
+        </div>
     </div>
-  </div>
-
-  
 </aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2019 John Doe<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
+<div class="post">
+    <div class="pjax">
+        <article class="index">
+            <div class="toc-ref">
     
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Why-Blog"><span class="toc-text">Why Blog</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#对博客的理解"><span class="toc-text">对博客的理解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于叶落阁"><span class="toc-text">关于叶落阁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#博客平台"><span class="toc-text">博客平台</span></a></li></ol></li></ol>
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-3 i,
+    .toc-level-3 ol {
+        display: none !important;
+    }
+</style>
+</div>
+            <h1 id="Why-Blog"><a href="#Why-Blog" class="headerlink" title="Why Blog"></a>Why Blog</h1><h2 id="对博客的理解"><a href="#对博客的理解" class="headerlink" title="对博客的理解"></a>对博客的理解</h2><p>喜欢写Blog的人，会经历三个阶段。</p>
+<blockquote>
+<p>第一阶段，刚接触Blog，觉得很新鲜，试着选择一个免费空间来写。</p>
+</blockquote>
+<blockquote>
+<p>第二阶段，发现免费空间限制太多，就自己购买域名和空间，搭建独立博客。</p>
+</blockquote>
+<blockquote>
+<p>第三阶段，觉得独立博客的管理太麻烦，最好在保留控制权的前提下，让别人来管，自己只负责写文章。</p>
+</blockquote>
+<p>我们每个人的在网络上产生的数据越来越多，这些信息是我们在互联网上存在过的痕迹，值得我们认真对待。但是它们被分散分布在各个网站上。很多时候我们很难将它们聚合在一起，而且各个网站的信息排布方式也没有办法自由控制，所以我们需要一个可以由自己主宰的空间——博客。</p>
+<p>通过博客，我们可以记录自己的生活和成长的轨迹。它不像 Twitter 那样碎片化，也不像 Facebook 那样关系化，它是私人的空间。</p>
+<h2 id="关于叶落阁"><a href="#关于叶落阁" class="headerlink" title="关于叶落阁"></a>关于叶落阁</h2><p><strong>叶落阁</strong> 是阿杰（杨玉杰）的个人站。</p>
+<p>到目前为止已经写了<code class="article_number"></code>篇文章， 共<code class="site_word_count"></code>字。</p>
+<p>本站访问人数：<code class="site_uv"></code>人次 ， 访问量：<code class="site_pv"></code>次</p>
+<h2 id="博客平台"><a href="#博客平台" class="headerlink" title="博客平台"></a>博客平台</h2><p>这个博客通过 <a href="https://hexo.io/">Hexo</a> 生成，部署在 <a href="https://pages.github.com/">GitHub Pages</a>，主题 <a href="https://github.com/yelog/hexo-theme-3-hexo">3-hexo</a> 已经在github上开源</p>
+<p>主要功能：</p>
+<ul>
+<li>搜索支持文章标题、标签(#标签)、作者(@作者)</li>
+<li>pad/手机等移动端适配</li>
+<li>页面全局快捷键 <a href="http://yelog.org/2017/03/24/3-hexo-shortcuts/">3-hexo快捷键说明</a></li>
+</ul>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+        </article>
+        
+        <p>
+            <a href="javascript:void(0)" class="dashang" onclick="dashangToggle()">赏</a>
+        </p>
+        
+        
+    </div>
+    <div class="copyright">
+        <p class="footer-entry">©2017 Yelog</p>
+<p class="footer-entry">Built with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p>
 
+    </div>
+    <div class="full-toc">
+        <button class="full"><span class="min "></span></button>
+<button class="post-toc-menu"><span class="post-toc-menu-icons"></span></button>
+<div class="post-toc"><span class="post-toc-title">目录</span>
+    <div class="post-toc-content">
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+    </div>
+</div>
+<a class="" id="rocket" href="javascript:void(0)"></a>
+    </div>
+</div>
+<div class="acParent"></div>
 
+<div class="hide_box" onclick="dashangToggle()"></div>
+<div class="shang_box">
+    <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+    <div class="shang_tit">
+        <p>喜欢就点赞,疼爱就打赏</p>
+    </div>
+    <div class="shang_payimg">
+        <div class="pay_img">
+            <img src="/img/alipay.jpg" class="alipay" title="扫码支持">
+            <img src="/img/weixin.jpg" class="weixin" title="扫码支持">
+        </div>
+    </div>
+    <div class="shang_payselect">
+        <span><label><input type="radio" name="pay" checked value="alipay">支付宝</label></span><span><label><input type="radio" name="pay" value="weixin">微信</label></span>
+    </div>
+</div>
+
+</body>
+<script src="//cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
 
 <script src="/js/script.js"></script>
+<script>
+    var img_resize = 'default';
+    /*作者、标签的自动补全*/
+    $(function () {
+        $('.search').AutoComplete({
+            'data': [],
+            'itemHeight': 20,
+            'width': 418
+        }).AutoComplete('show');
+    })
+    function initArticle() {
+        /*渲染对应的表格样式*/
+        
+            $(".post .pjax table").addClass("green_title");
+        
+
+        /*渲染打赏样式*/
+        
+        $("input[name=pay]").on("click", function () {
+            if($("input[name=pay]:checked").val()=="weixin"){
+                $(".shang_box .shang_payimg .pay_img").addClass("weixin_img");
+            } else {
+                $(".shang_box .shang_payimg .pay_img").removeClass("weixin_img");
+            }
+        })
+        
+
+        /*高亮代码块行号*/
+        
+        $('pre code').each(function(){
+            var lines = $(this).text().split('\n').length - 1;
+            var $numbering = $('<ul/>').addClass('pre-numbering').attr("unselectable","on");
+            $(this).addClass('has-numbering')
+                    .parent()
+                    .append($numbering);
+            for(i=1;i<=lines;i++){
+                $numbering.append($('<li/>').text(i));
+            }
+        });
+        
+
+        /*访问数量*/
+        
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js");
+        
+
+        /*代码高亮，行号对齐*/
+        $('.pre-numbering').css('line-height',$('.has-numbering').css('line-height'));
+
+        
+    }
+
+    /*打赏页面隐藏与展示*/
+    
+    function dashangToggle() {
+        $(".shang_box").fadeToggle();
+        $(".hide_box").fadeToggle();
+    }
+    
+
+</script>
+
+<!--加入行号的高亮代码块样式-->
+
+<style>
+    pre{
+        position: relative;
+        margin-bottom: 24px;
+        border-radius: 10px;
+        border: 2px solid #e2dede;
+        background: #FFF;
+        overflow: hidden;
+    }
+    code.has-numbering{
+        margin-left: 30px;
+    }
+    .pre-numbering{
+        margin: 0px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        padding: 0.5em 3px 0.7em 5px;
+        border-right: 1px solid #C3CCD0;
+        text-align: right;
+        color: #AAA;
+        background-color: #fafafa;
+    }
+</style>
+
+<!--自定义样式设置-->
+<style>
+    
+    .nav-right nav a.hover, #local-search-result a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+    /*列表样式*/
+    
+    .post .pjax article .article-entry>ol, .post .pjax article .article-entry>ul, .post .pjax article>ol, .post .pjax article>ul{
+        border: #e2dede solid 2px;
+        border-radius: 10px;
+        padding: 10px 32px 10px 56px;
+    }
+    .post .pjax article .article-entry li>ol, .post .pjax article .article-entry li>ul,.post .pjax article li>ol, .post .pjax article li>ul{
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    .post .pjax article .article-entry>ol>li, .post .pjax article .article-entry>ul>li,.post .pjax article>ol>li, .post .pjax article>ul>li{
+        margin-bottom: auto;
+        margin-left: auto;
+    }
+    .post .pjax article .article-entry li>ol>li, .post .pjax article .article-entry li>ul>li,.post .pjax article li>ol>li, .post .pjax article li>ul>li{
+        margin-bottom: auto;
+        margin-left: auto;
+    }
+    
+
+    /*引用块样式*/
+    
+    .post .pjax article blockquote {
+        padding: 10px 20px;
+        background-color: white;
+        border: none;
+        border-left: 4px solid #42b983;
+        border-right: 4px solid #42b983;
+        border-radius: 10px;
+    }
+    
+
+    /*文章列表背景图*/
+    
+    .nav-right:before {
+        content: ' ';
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.1;
+        background: url("http://img.xiangzhangshugongyi.com/FlSExUGfRSaqxkK5v42CpuI-tXAL.jpg");
+        background-repeat: no-repeat;
+        background-position: 50% 0;
+        -ms-background-size: cover;
+        -o-background-size: cover;
+        -moz-background-size: cover;
+        -webkit-background-size: cover;
+        background-size: cover;
+    }
+    
+</style>
 
 
 
-  </div>
-</body>
+
+
+
 </html>
